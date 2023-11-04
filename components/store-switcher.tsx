@@ -22,9 +22,9 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
+    CommandGroup,
     CommandSeparator
 } from "@/components/ui/command";
-import { CommandGroup } from "cmdk";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
