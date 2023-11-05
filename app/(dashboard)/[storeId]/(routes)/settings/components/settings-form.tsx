@@ -26,6 +26,7 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { ApiAlert } from "@/components/ui/api-alert";
+import { useOrigin } from "@/hooks/use-origin";
 
 
 interface SettingsFormProps {
@@ -41,6 +42,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
 }) => {
     const params = useParams();
     const router = useRouter();
+    const origin= useOrigin();
 
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
