@@ -26,7 +26,7 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { useOrigin } from "@/hooks/use-origin";
-import ImageUpload from "@/components/image-upload";
+import ImageUpload from "@/components/ui/image-upload";
 
 const formSchema = z.object({
     label: z.string().min(1),
