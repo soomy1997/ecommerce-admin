@@ -54,25 +54,32 @@ export async function POST(
     const paymentResponse = await axios.post(
       "https://api.moyasar.com/v1/payments",
       {
-        amount: amount,
-        currency: "SAR",
-        description: "Order payment",
-        callback_url: `${process.env.FRONTEND_STORE_URL}/payment-callback?orderId=${order.id}`,
-        metadata: {
-          orderlId: order.id,
-        },
-        credit_card: {
-          save_card: "true",
-        },
 
-        // You can add more fields as required by your application logic
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.MOYASAR_API_KEY}`,
+        method: 'post',
+        url: 'https://api.moyasar.com/v1/payments',
+        auth: {
+          username: process.env.MOYASAR_API_KEY, // Your Moyasar API key
+          password: "" // Password is not needed for token-based auth
         },
-      }
-    );
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          amount: amount,
+          currency: "SAR",
+          description: "Order payment",
+          callback_url: `${process.env.FRONTEND_STORE_URL}/payment-callback?orderId=${order.id}`,
+          source: {
+            type: 'creditcard',
+            // The credit card details should be securely collected from the customer
+            // and should not be hardcoded
+          },
+          metadata: {
+            orderId: order.id,
+          },
+          // Additional data fields as required by Moyasar
+        }
+      });
 
     return new NextResponse(JSON.stringify({ url: paymentResponse.data.url }), {
       headers: {
@@ -81,17 +88,21 @@ export async function POST(
       },
       status: 200,
     });
-  } catch (error) {
-    // Handle error appropriately
-    return new NextResponse(
-      JSON.stringify({ error: "An unexpected error occurred" }),
-      {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-        status: 500,
-      }
-    );
+  } catch (error: any) {
+    console.error('Error processing payment:', error);
+    let errorMessage = 'An unexpected error occurred';
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error(error.response.data);
+      errorMessage = error.response.data.message;
+    }
+    return new NextResponse(JSON.stringify({ error: errorMessage }), {
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+      status: 500,
+    });
   }
 }
